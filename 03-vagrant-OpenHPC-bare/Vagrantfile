@@ -1,0 +1,61 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+	
+  # computing nodes general specs
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "512"
+  end
+  config.vm.box = "TimGesekus/pxe-boot"
+  config.vm.box_version = "1.0"
+
+
+  ##############################
+  # headnode configuration.
+  # headnode is different.
+  ##############################
+  config.vm.define "headnode" do |headnode|
+    headnode.vm.box = "centos/7"
+    headnode.vm.box_version = "1802.01"
+    headnode.vm.hostname = "headnode"
+    headnode.vm.network "private_network", ip: "10.100.100.1", netmask:"255.255.0.0"
+    headnode.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+      vb.memory = "1024"
+    end
+  end
+
+
+  ##########################
+  # Computing nodes
+  ##########################
+  # node1
+  config.vm.define "node1" do |node|
+    node.vm.network "private_network", ip:"10.100.101.1", netmask:"255.255.0.0",  auto_config: false
+    node.vm.boot_timeout = 0.1
+
+    node.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+      vb.customize ["modifyvm", :id, "--macaddress1", "aabbccddee01" ]
+      vb.customize ["modifyvm", :id, "--nic1", "hostonly" ]
+      vb.customize ["modifyvm", :id, "--hostonlyadapter1", "vboxnet5" ]
+      vb.customize ["modifyvm", :id, "--boot1", "net" ]
+    end
+  end
+
+  # node2
+  config.vm.define "node2" do |node|
+    node.vm.network "private_network", ip:"10.100.101.2", netmask:"255.255.0.0", auto_config: false
+    node.vm.boot_timeout = 0.1
+
+    node.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+      vb.customize ["modifyvm", :id, "--macaddress1", "aabbccddee02" ]
+      vb.customize ["modifyvm", :id, "--nic1", "hostonly" ]
+      vb.customize ["modifyvm", :id, "--hostonlyadapter1", "vboxnet5" ]
+      vb.customize ["modifyvm", :id, "--boot1", "net" ]
+    end
+  end
+
+end

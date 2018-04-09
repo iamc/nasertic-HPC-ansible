@@ -1,0 +1,9 @@
+---
+# file: head.yml
+- hosts: headnode
+  become: yes
+
+  roles:
+    - common
+#   - omd_server
+#   - ganglia-server

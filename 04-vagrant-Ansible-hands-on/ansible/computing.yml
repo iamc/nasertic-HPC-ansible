@@ -1,0 +1,10 @@
+---
+# file: computing.yml
+- hosts: computing
+  become: yes
+
+  roles:
+    - common
+    - { role: check_mk, tags: [ 'check_mk' ] }
+#   - slurm
+#   - ganglia 
